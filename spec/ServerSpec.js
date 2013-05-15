@@ -50,6 +50,7 @@ describe("Node Server Request Listener Function", function() {
    var res = new StubResponse();
 
    handler.handleRequest(req, res);
+   console.log(res);
 
    expect(res._responseCode).toEqual(200);
    expect(res._data).toEqual("[]");

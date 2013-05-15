@@ -4,7 +4,15 @@
  * from this file and include it in basic-server.js. Check out the
  * node module documentation at http://nodejs.org/api/modules.html. */
 
-var handleAnyRequest = function(request, response) {
+
+
+exports.handleRequest = function(request, response) {
+  console.log("Serving request type " + request.method + " for url " + request.url);
+  var statusCode = 200;
+  var headers = defaultCorsHeaders;
+  headers['Content-Type'] = "text/plain";
+  response.writeHead(statusCode, headers);
+
   var data = [];
 
   request.on('data', function(chunk) {
@@ -15,23 +23,16 @@ var handleAnyRequest = function(request, response) {
   request.on('end', function() {
     console.log('END event (/classes/room1)');
     console.log(data);
+    response.end('blah');
   });
 
   console.log('Handle classes room1');
 };
 
 
-var routes = {
-  '/classes/room1': handleAnyRequest,
-  '/classes/room' : handleAnyRequest
-};
-
-
-exports.handleRequest = function(request, response) {
-
-  if (routes[request.url]) {
-    routes[request.url](request, response);
-  } else {
-    response.end('THIS SHOULD BE A 404');
-  }
+var defaultCorsHeaders = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "access-control-allow-headers": "content-type, accept",
+  "access-control-max-age": 10 // Seconds.
 };
