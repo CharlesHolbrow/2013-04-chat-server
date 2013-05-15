@@ -33,7 +33,8 @@ var requestListener = function (request, response) {
    * anything back to the client until you do. The string you pass to
    * response.end() will be the body of the response - i.e. what shows
    * up in the browser.*/
-  chat.handleRequest(request, response) ;
+  chat.handleRequest(request, response);
+  response.end('Response.end has happened');
 };
 
 /* These headers will allow Cross-Origin Resource Sharing.

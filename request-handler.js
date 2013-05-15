@@ -4,6 +4,34 @@
  * from this file and include it in basic-server.js. Check out the
  * node module documentation at http://nodejs.org/api/modules.html. */
 
+var handleAnyRequest = function(request, response) {
+  var data = [];
+
+  request.on('data', function(chunk) {
+    console.log('DATA event', chunk);
+    data.push(chunk);
+  });
+
+  request.on('end', function() {
+    console.log('END event (/classes/room1)');
+    console.log(data);
+  });
+
+  console.log('Handle classes room1');
+};
+
+
+var routes = {
+  '/classes/room1': handleAnyRequest,
+  '/classes/room' : handleAnyRequest
+};
+
+
 exports.handleRequest = function(request, response) {
-  response.end('Hellow spelled wrong');
+
+  if (routes[request.url]) {
+    routes[request.url](request, response);
+  } else {
+    response.end('THIS SHOULD BE A 404');
+  }
 };
