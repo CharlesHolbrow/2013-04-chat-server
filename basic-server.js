@@ -1,5 +1,6 @@
 /* Import node's http module: */
 var http = require("http");
+var chat = require("./request-handler.js");
 
 /* This is the callback function that will be called each time a
  * client (i.e.. a web browser) makes a request to our server. */
@@ -32,7 +33,7 @@ var requestListener = function (request, response) {
    * anything back to the client until you do. The string you pass to
    * response.end() will be the body of the response - i.e. what shows
    * up in the browser.*/
-  response.end("Hello, World!");
+  chat.handleRequest(request, response) ;
 };
 
 /* These headers will allow Cross-Origin Resource Sharing.
