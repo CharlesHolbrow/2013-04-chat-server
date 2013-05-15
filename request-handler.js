@@ -25,8 +25,7 @@ exports.handleRequest = function(request, response) {
 
   request.on('end', function() {
     console.log('END event (/classes/room1)');
-    console.log(data);
-    response.end('blah');
+    response.end('Fix Me');
   });
 
   console.log('Handle classes room1');
