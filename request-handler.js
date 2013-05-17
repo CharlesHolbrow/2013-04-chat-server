@@ -22,37 +22,43 @@ exports.handleRequest = function(request, response) {
 
   var statusCode = 200;
   var headers = defaultCorsHeaders;
-  headers['Content-Type'] = "text/plain"; // hint hint: this needs to be json, not text
+  headers['Content-Type'] = "application/json";
   response.writeHead(statusCode, headers);
 
-  // For GET, return the messages
-
-  // For OPTIONS, return the headers, but no body is necessary
-
-  // For POST, and ONLY POST, parse the JSON
-
-  var data = [];
-
-  request.on('data', function(chunk) {
-    console.log('DATA event', chunk);
-    data.push(chunk);
-  });
-
-  request.on('end', function() {
-    console.log('------');
-    console.log('END event', pathname);
-
-    try {
-      var message = JSON.parse(data.join(''));
-      console.log('Data:', message);
-      // DO something with message
-    } catch (error) {
-      console.log('JSON.parse Error:', error);
-    }
-    finally {
+  switch (request.method) {
+    case 'GET':
+      // For GET, return the messages
       response.end('Fix Me');
-    }
-  });
+      break;
+    case 'OPTIONS':
+      // For OPTIONS, return the headers, but no body is necessary
+      response.end('Fix Me');
+      break;
+    case 'POST':
+      // For POST, and ONLY POST, parse the JSON
+      var data = [];
 
+      request.on('data', function(chunk) {
+        console.log('DATA event', chunk);
+        data.push(chunk);
+      });
+
+      request.on('end', function() {
+        console.log('------');
+        console.log('END event', pathname);
+
+        try {
+          var message = JSON.parse(data.join(''));
+          console.log('Data:', message);
+          // DO something with message
+        } catch (error) {
+          console.log('JSON.parse Error:', error);
+        }
+        finally {
+          response.end('Fix Me');
+        }
+      });
+      break;
+  }
   console.log('Handle classes room1');
 };
