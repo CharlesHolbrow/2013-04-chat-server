@@ -5,10 +5,13 @@
  * node module documentation at http://nodejs.org/api/modules.html. */
 
 var url = require('url');
+var querystring = require('querystring');
+
 var rooms = {
   '/classes/room': [],
   '/classes/room1': []
 };
+
 var db = [];
 
 var defaultCorsHeaders = {
@@ -23,6 +26,9 @@ exports.handleRequest = function(request, response) {
   request.setEncoding('utf8');
 
   var pathname = url.parse(request.url).pathname;
+  var search = url.parse(request.url).search;
+  var query = querystring.parse(search);
+  console.log(query);
 
   var statusCode = 500;
   var headers = defaultCorsHeaders;
@@ -33,7 +39,8 @@ exports.handleRequest = function(request, response) {
     case 'GET':
       // For GET, return the messages
       statusCode = (rooms[pathname]) ? 200 : 404;
-      data = rooms[pathname];
+      data = rooms[pathname] || [];
+      data = data.slice(~~query['?skip']);
       console.log('GET:', statusCode, pathname);
       response.writeHead(statusCode, headers);
       response.end(JSON.stringify({results:data}));
