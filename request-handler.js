@@ -5,7 +5,7 @@
  * node module documentation at http://nodejs.org/api/modules.html. */
 
 var url = require('url');
-
+var db = [];
 
 var defaultCorsHeaders = {
   "access-control-allow-origin": "*",
@@ -20,23 +20,25 @@ exports.handleRequest = function(request, response) {
 
   var pathname = url.parse(request.url).pathname;
 
-  var statusCode = 200;
+  var statusCode = 500;
   var headers = defaultCorsHeaders;
   headers['Content-Type'] = "application/json";
-  response.writeHead(statusCode, headers);
 
   switch (request.method) {
     case 'GET':
       // For GET, return the messages
+      response.writeHead(200, headers);
       response.end('Fix Me');
       break;
     case 'OPTIONS':
       // For OPTIONS, return the headers, but no body is necessary
+      response.writeHead(200, headers);
       response.end('Fix Me');
       break;
     case 'POST':
       // For POST, and ONLY POST, parse the JSON
       var data = [];
+      var answerMessage;
 
       request.on('data', function(chunk) {
         console.log('DATA event', chunk);
@@ -50,12 +52,16 @@ exports.handleRequest = function(request, response) {
         try {
           var message = JSON.parse(data.join(''));
           console.log('Data:', message);
-          // DO something with message
+          db.push(message);
+          response.writeHead(201, headers);
+          answerMessage = 'Message Received';
         } catch (error) {
           console.log('JSON.parse Error:', error);
+          response.writeHead(400, headers);
+          answerMessage = 'POST Error. Bad JSON?';
         }
         finally {
-          response.end('Fix Me');
+          response.end(answerMessage);
         }
       });
       break;
