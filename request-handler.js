@@ -24,7 +24,9 @@ exports.handleRequest = function(request, response) {
   });
 
   request.on('end', function() {
-    console.log('END event (/classes/room1)');
+    console.log('------');
+    console.log('END event', pathname);
+    console.log('Data:', data);
     response.end('Fix Me');
   });
 
