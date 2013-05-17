@@ -28,7 +28,7 @@ exports.handleRequest = function(request, response) {
     case 'GET':
       // For GET, return the messages
       response.writeHead(200, headers);
-      response.end(JSON.stringify(db));
+      response.end(JSON.stringify({results:db}));
       break;
     case 'OPTIONS':
       // For OPTIONS, return the headers, but no body is necessary
@@ -55,7 +55,7 @@ exports.handleRequest = function(request, response) {
           console.log('Data:', message);
           db.push(message);
           response.writeHead(201, headers);
-          answerMessage = JSON.stringify('Message Received');
+          answerMessage = JSON.stringify('\n');
         } catch (error) {
           console.log('JSON.parse Error:', error);
           response.writeHead(400, headers);
