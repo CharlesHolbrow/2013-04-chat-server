@@ -6,15 +6,30 @@
 
 var url = require('url');
 
+
+var defaultCorsHeaders = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "access-control-allow-headers": "content-type, accept",
+  "access-control-max-age": 10 // Seconds.
+};
+
 exports.handleRequest = function(request, response) {
   console.log("Serving request type " + request.method + " for url " + request.url);
+  request.setEncoding('utf8');
 
   var pathname = url.parse(request.url).pathname;
 
   var statusCode = 200;
   var headers = defaultCorsHeaders;
-  headers['Content-Type'] = "text/plain";
+  headers['Content-Type'] = "text/plain"; // hint hint: this needs to be json, not text
   response.writeHead(statusCode, headers);
+
+  // For GET, return the messages
+
+  // For OPTIONS, return the headers, but no body is necessary
+
+  // For POST, and ONLY POST, parse the JSON
 
   var data = [];
 
@@ -26,17 +41,18 @@ exports.handleRequest = function(request, response) {
   request.on('end', function() {
     console.log('------');
     console.log('END event', pathname);
-    console.log('Data:', data);
-    response.end('Fix Me');
+
+    try {
+      var message = JSON.parse(data.join(''));
+      console.log('Data:', message);
+      // DO something with message
+    } catch (error) {
+      console.log('JSON.parse Error:', error);
+    }
+    finally {
+      response.end('Fix Me');
+    }
   });
 
   console.log('Handle classes room1');
-};
-
-
-var defaultCorsHeaders = {
-  "access-control-allow-origin": "*",
-  "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "access-control-allow-headers": "content-type, accept",
-  "access-control-max-age": 10 // Seconds.
 };
