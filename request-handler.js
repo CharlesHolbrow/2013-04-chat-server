@@ -1,39 +1,29 @@
-/* You should implement your request handler function in this file.
- * But you need to pass the function to http.createServer() in
- * basic-server.js.  So you must figure out how to export the function
- * from this file and include it in basic-server.js. Check out the
- * node module documentation at http://nodejs.org/api/modules.html. */
-
 var url = require('url');
 var querystring = require('querystring');
 
 var rooms = {
   '/classes/room': [],
-  '/classes/room1': []
+  '/classes/room1': [],
+  '/1/classes/messages': []
 };
 
-var db = [];
-
-var defaultCorsHeaders = {
+var headers = {
   "access-control-allow-origin": "*",
   "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
   "access-control-allow-headers": "content-type, accept",
-  "access-control-max-age": 10 // Seconds.
+  "access-control-max-age": 10, // Seconds
+  "Content-Type": "application/json"
 };
 
 exports.handleRequest = function(request, response) {
   console.log("Serving request type " + request.method + " for url " + request.url);
   request.setEncoding('utf8');
 
-  var pathname = url.parse(request.url).pathname;
-  var search = url.parse(request.url).search;
-  var query = querystring.parse(search);
-  console.log(query);
+  var parsedurl = url.parse(request.url);
+  var pathname = parsedurl.pathname;
+  var query = querystring.parse(parsedurl.search);
 
-  var statusCode = 500;
-  var headers = defaultCorsHeaders;
-  var data;
-  headers['Content-Type'] = "application/json";
+  var statusCode = 500, data;
 
   switch (request.method) {
     case 'GET':
