@@ -5,6 +5,10 @@
  * node module documentation at http://nodejs.org/api/modules.html. */
 
 var url = require('url');
+var rooms = {
+  '/classes/room': [],
+  '/classes/room1': []
+};
 var db = [];
 
 var defaultCorsHeaders = {
@@ -22,13 +26,17 @@ exports.handleRequest = function(request, response) {
 
   var statusCode = 500;
   var headers = defaultCorsHeaders;
+  var data;
   headers['Content-Type'] = "application/json";
 
   switch (request.method) {
     case 'GET':
       // For GET, return the messages
-      response.writeHead(200, headers);
-      response.end(JSON.stringify({results:db}));
+      statusCode = (rooms[pathname]) ? 200 : 404;
+      data = rooms[pathname];
+      console.log('GET:', statusCode, pathname);
+      response.writeHead(statusCode, headers);
+      response.end(JSON.stringify({results:data}));
       break;
     case 'OPTIONS':
       // For OPTIONS, return the headers, but no body is necessary
@@ -38,12 +46,12 @@ exports.handleRequest = function(request, response) {
       break;
     case 'POST':
       // For POST, and ONLY POST, parse the JSON
-      var data = [];
+      var postData = [];
       var answerMessage;
 
       request.on('data', function(chunk) {
         console.log('DATA event', chunk);
-        data.push(chunk);
+        postData.push(chunk);
       });
 
       request.on('end', function() {
@@ -51,9 +59,10 @@ exports.handleRequest = function(request, response) {
         console.log('POST request to:', pathname);
 
         try {
-          var message = JSON.parse(data.join(''));
+          var message = JSON.parse(postData.join(''));
           console.log('Data:', message);
-          db.push(message);
+          rooms[pathname] = rooms[pathname] || [];
+          rooms[pathname].push(message);
           response.writeHead(201, headers);
           answerMessage = JSON.stringify('\n');
         } catch (error) {
