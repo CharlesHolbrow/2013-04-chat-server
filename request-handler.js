@@ -4,7 +4,8 @@ var querystring = require('querystring');
 var rooms = {
   '/classes/room': [],
   '/classes/room1': [],
-  '/1/classes/messages': []
+  '/1/classes/messages': [],
+  '/classes/messages': []
 };
 
 var headers = {
@@ -27,43 +28,33 @@ exports.handleRequest = function(request, response) {
 
   switch (request.method) {
     case 'GET':
-      // For GET, return the messages
       statusCode = (rooms[pathname]) ? 200 : 404;
       data = rooms[pathname] || [];
       data = data.slice(~~query['?skip']);
-      console.log('GET:', statusCode, pathname);
       response.writeHead(statusCode, headers);
       response.end(JSON.stringify({results:data}));
       break;
     case 'OPTIONS':
-      // For OPTIONS, return the headers, but no body is necessary
       headers['Allow'] = 'GET, OPTIONS, POST';
       response.writeHead(200, headers);
       response.end('');
       break;
     case 'POST':
-      // For POST, and ONLY POST, parse the JSON
       var postData = [];
       var answerMessage;
 
       request.on('data', function(chunk) {
-        console.log('DATA event', chunk);
         postData.push(chunk);
       });
 
       request.on('end', function() {
-        console.log('------');
-        console.log('POST request to:', pathname);
-
         try {
           var message = JSON.parse(postData.join(''));
-          console.log('Data:', message);
           rooms[pathname] = rooms[pathname] || [];
           rooms[pathname].push(message);
           response.writeHead(201, headers);
-          answerMessage = JSON.stringify('\n');
+          answerMessage = JSON.stringify('');
         } catch (error) {
-          console.log('JSON.parse Error:', error);
           response.writeHead(400, headers);
           answerMessage = JSON.stringify('POST Error. Bad JSON?');
         }
@@ -73,5 +64,4 @@ exports.handleRequest = function(request, response) {
       });
       break;
   }
-  console.log('Handle classes room1');
 };
